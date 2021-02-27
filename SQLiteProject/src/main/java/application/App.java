@@ -6,6 +6,11 @@ import java.sql.SQLException;
 public class App {
 
 	public static void main(String[] args) throws ClassNotFoundException, SQLException {
+		
+		// Define ids and names.
+		int [] ids = {0, 1, 2, 3, 4};
+		String [] names = {"Iftikhar Khan", "Nelma Khan", "Farhan Khan", "Manal Khan", "Inayah Khan"};
+		
 		// Get the connection using SQLite driver.
 		Class.forName("org.sqlite.JDBC");
 		String dbUrl = "jdbc:sqlite:people.db";
@@ -16,21 +21,19 @@ public class App {
 		
 		var sql = "create table if not exists user (id integer primary Key, name text not null)";
 		stmt.execute(sql);
+	
+		// insert ids and names db.
+		sql = "insert into user (id, name) values (?, ?)";
+		var insertStmt = conn.prepareStatement(sql);
 		
-		sql = "insert into user (id, name) values (0, 'Iftikhar')";
-		stmt.execute(sql);
+		for(int i = 0; i < ids.length; i++) {
+			insertStmt.setInt(1, ids[i]);
+			insertStmt.setString(2, names[i]);
+			
+			insertStmt.executeUpdate();
+		}
 		
-		sql = "insert into user (id, name) values (1, 'Nelma')";
-		stmt.execute(sql);
-		
-		sql = "insert into user (id, name) values (2, 'Farhan')";
-		stmt.execute(sql);
-		
-		sql = "insert into user (id, name) values (3, 'Manal')";
-		stmt.execute(sql);
-
-		sql = "insert into user (id, name) values (4, 'Inayah')";
-		stmt.execute(sql);
+		insertStmt.close();
 		
 		sql = "select * from user";
 		var rs = stmt.executeQuery(sql);
